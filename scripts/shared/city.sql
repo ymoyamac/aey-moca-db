@@ -40,4 +40,4 @@ SELECT city_id AS id,
     cty_dt_created_at AS created_at,
     cty_dt_updated_at AS updated_at,
     cty_st_is_active AS is_active
-FROM shr02_countries;
+FROM T_CITIES;

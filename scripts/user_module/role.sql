@@ -16,71 +16,47 @@ CREATE TABLE IF NOT EXISTS public.T_ROL01_ROLES(
 -- T_ROL02_PERMISSIONS
 -- --------------------------------------------
 
-CREATE TABLE IF NOT EXISTS public.T_ROL02_PERMISSIONS(
-	permission_id          INTEGER UNIQUE NOT NULL,
-	prm_tx_type            VARCHAR(45) UNIQUE NOT NULL,
-    prm_dt_created_at      TIMESTAMP NOT NULL,
-    prm_dt_updated_at      TIMESTAMP NOT NULL,
-	prm_st_is_active       BOOLEAN NOT NULL,
-	PRIMARY KEY(prm_id)
-);
-
--- --------------------------------------------
--- T_ROL03_PERMISSIONS_ROLES_HUB
--- --------------------------------------------
-
-CREATE TABLE IF NOT EXISTS public.T_ROL03_PERMISSIONS_ROLES_HUB(
-	id              INTEGER UNIQUE NOT NULL,
-	role_id         INTEGER NOT NULL,
-    permission_id   INTEGER NOT NULL,
-	PRIMARY KEY(id)
+CREATE TABLE IF NOT EXISTS public.T_ROL02_MODULE_USER_PERMISSIONS(
+    permission_id           INTEGER UNIQUE NOT NULL,
+    ump_st_all              BOOLEAN,
+    ump_st_create           BOOLEAN,
+	ump_st_read             BOOLEAN,
+    ump_st_update           BOOLEAN,
+	ump_st_detele           BOOLEAN,
+    ump_st_enable_disable   BOOLEAN,
+	ump_fk_role_id          INTEGER NOT NULL,
+    ump_fk_module           VARCHAR(45) UNIQUE NOT NULL,
+	PRIMARY KEY(permission_id)
 );
 
 -- --------------------------------------------
 -- CONTRAINS
 -- --------------------------------------------
 
-ALTER TABLE public.T_ROL03_PERMISSIONS_ROLES_HUB
-	ADD CONSTRAINT FK01_T_ROL03_PERMISSIONS_ROLES_HUB
-		FOREIGN KEY(role_id)
+ALTER TABLE public.T_ROL02_MODULE_USER_PERMISSIONS
+	ADD CONSTRAINT FK01_T_ROL02_MOD_TO_ROL
+		FOREIGN KEY(ump_fk_role_id)
 		REFERENCES T_ROL01_ROLES(role_id);
-
-ALTER TABLE public.T_ROL03_PERMISSIONS_ROLES_HUB
-	ADD CONSTRAINT FK02_T_ROL03_PERMISSIONS_ROLES_HUB
-		FOREIGN KEY(prm_id)
-		REFERENCES T_ROL02_PERMISSIONS(prm_id);
 
 -- --------------------------------------------
 -- INSERTS
 -- --------------------------------------------
 
 INSERT INTO T_ROL01_ROLES VALUES (1, 'ADMIN_ROLE', now(), now(), true);
-INSERT INTO T_ROL01_ROLES VALUES (2, 'EMPLOYEE_ROLE', now(), now(), true);
-INSERT INTO T_ROL01_ROLES VALUES (3, 'CUSTOMER_ROLE', now(), now(), true);
-INSERT INTO T_ROL01_ROLES VALUES (4, 'USER_ROLE', now(), now(), true);
+INSERT INTO T_ROL01_ROLES VALUES (2, 'MANAGER_ROLE', now(), now(), true);
+INSERT INTO T_ROL01_ROLES VALUES (3, 'EMPLOYEE_ROLE', now(), now(), true);
+INSERT INTO T_ROL01_ROLES VALUES (4, 'CUSTOMER_ROLE', now(), now(), true);
+INSERT INTO T_ROL01_ROLES VALUES (5, 'GUESTS_ROLE', now(), now(), true);
 
 --
 
-INSERT INTO T_ROL02_PERMISSIONS VALUES (1, 'ALL', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (2, 'CREATE', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (3, 'READ', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (4, 'UPDATE', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (5, 'DELETE', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (6, 'READ_ONLY', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (7, 'CREATE_SCHOOL_SUPPLY_LIST', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (8, 'READ_SCHOOL_SUPPLY_LIST', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (9, 'UPDATE_SCHOOL_SUPPLY_LIST', now(), now(), true);
-INSERT INTO T_ROL02_PERMISSIONS VALUES (10, 'DELETE_SCHOOL_SUPPLY_LIST', now(), now(), true);
-
---
-
-INSERT INTO T_ROL03_PERMISSIONS_ROLES_HUB VALUES (1, 1, 1);
-INSERT INTO T_ROL03_PERMISSIONS_ROLES_HUB VALUES (2, 2, 2);
-INSERT INTO T_ROL03_PERMISSIONS_ROLES_HUB VALUES (3, 2, 3);
-INSERT INTO T_ROL03_PERMISSIONS_ROLES_HUB VALUES (4, 2, 4);
-INSERT INTO T_ROL03_PERMISSIONS_ROLES_HUB VALUES (5, 2, 5);
-INSERT INTO T_ROL03_PERMISSIONS_ROLES_HUB VALUES (6, 4, 6);
-
+/*                                                      ALL CREATE READ UPDATE DELETE ENDIS*/
+INSERT INTO T_ROL02_MODULE_USER_PERMISSIONS VALUES (1, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 1, 'mod-priv-user'); /* ADMIN_ROLE */
+INSERT INTO T_ROL02_MODULE_USER_PERMISSIONS VALUES (1, TRUE, TRUE, TRUE, TRUE, TRUE, TRUE, 1, 'mod-mix-product'); /* ADMIN_ROLE */
+INSERT INTO T_ROL02_MODULE_USER_PERMISSIONS VALUES (2, FALSE, TRUE, TRUE, TRUE, FALSE, TRUE, 2, 'mod-priv-user'); /* MANAGER_ROLE */
+INSERT INTO T_ROL02_MODULE_USER_PERMISSIONS VALUES (3, FALSE, TRUE, TRUE, TRUE, FALSE, FALSE, 3, 'mod-priv-user'); /* EMPLOYEE_ROLE */
+INSERT INTO T_ROL02_MODULE_USER_PERMISSIONS VALUES (4, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, 4, 'mod-priv-user'); /* CUSTOMER_ROLE */
+INSERT INTO T_ROL02_MODULE_USER_PERMISSIONS VALUES (5, FALSE, FALSE, TRUE, FALSE, FALSE, FALSE, 5, 'mod-priv-user'); /* GUESTS_ROLE */
 -- --------------------------------------------
 -- SELECTS
 -- --------------------------------------------
@@ -102,11 +78,18 @@ WHERE role_id = 1 AND role_st_is_active = true;
 
 SELECT T_ROL01_ROLES.role_id AS id,
     T_ROL01_ROLES.role_tx_type AS type,
-    T_ROL02_PERMISSIONS.prm_tx_type AS permission
+    T_ROL01_ROLES.role_dt_created_at AS created_at,
+    T_ROL01_ROLES.role_dt_updated_at AS updated_at,
+    T_ROL01_ROLES.role_st_is_active AS is_active,
+    UMP.ump_st_all AS all,
+    UMP.ump_st_create AS create,
+	UMP.ump_st_read AS read,
+    UMP.ump_st_update AS update,
+	UMP.ump_st_detele AS delete,
+	UMP.ump_st_enable_disable AS enableDisable,
+    UMP.ump_fk_module as module
 FROM T_ROL01_ROLES
-INNER JOIN T_ROL03_PERMISSIONS_ROLES_HUB 
-    ON T_ROL01_ROLES.role_id = T_ROL03_PERMISSIONS_ROLES_HUB.role_id
-INNER JOIN T_ROL02_PERMISSIONS
-    ON T_ROL03_PERMISSIONS_ROLES_HUB.prm_id = T_ROL02_PERMISSIONS.prm_id
-WHERE T_ROL01_ROLES.role_id	= 2;
+INNER JOIN T_ROL02_MODULE_USER_PERMISSIONS UMP
+    ON T_ROL01_ROLES.role_id = UMP.ump_fk_role_id
+WHERE T_ROL01_ROLES.role_id = 1;
     

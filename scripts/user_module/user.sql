@@ -13,25 +13,28 @@ CREATE TABLE IF NOT EXISTS public.T_USR01_USERS(
 	usr_st_is_active        	BOOLEAN NOT NULL DEFAULT TRUE,
 	usr_fk_gender_id            INTEGER NOT NULL,
 	usr_fk_role_id              INTEGER NOT NULL,
-	usr_fk_detail_id			INTEGER,
+	usr_fk_account_id			INTEGER,
 	PRIMARY KEY(user_id)
 );
 
 -- --------------------------------------------
--- T_USR02_DETAILS
+-- T_USR02_ACCOUNTS
 -- --------------------------------------------
 
-CREATE TABLE IF NOT EXISTS public.T_USR02_DETAILS(
-	detail_id         		INTEGER UNIQUE NOT NULL,
-	dtl_tx_email            VARCHAR(100) UNIQUE NOT NULL,
-	dtl_tx_backup_email     VARCHAR(100) UNIQUE,
-	dtl_tx_password         VARCHAR(100) NOT NULL,
-	dtl_tx_mobile_phone     VARCHAR(10) NOT NULL,
-	dtl_tx_phone_number     VARCHAR(10),
-    dtl_dt_created_at      	TIMESTAMP NOT NULL,
-    dtl_dt_updated_at      	TIMESTAMP NOT NULL,
-	dtl_st_is_active        BOOLEAN NOT NULL DEFAULT TRUE,
-	PRIMARY KEY(detail_id)
+CREATE TABLE IF NOT EXISTS public.T_USR02_ACCOUNTS(
+	account_id         		INTEGER UNIQUE NOT NULL,
+	acc_tx_nickname			VARCHAR(45) NOT NULL,
+	acc_tx_email            VARCHAR(100) UNIQUE NOT NULL,
+	acc_tx_backup_email     VARCHAR(100) UNIQUE,
+	acc_tx_password         VARCHAR(100) NOT NULL,
+	acc_tx_mobile_phone     VARCHAR(10) NOT NULL,
+	acc_tx_phone_number     VARCHAR(10),
+	acc_tx_status			VARCHAR(45) NOT NULL,
+	acc_json_images			JSONB,
+    acc_dt_created_at      	TIMESTAMP NOT NULL,
+    acc_dt_updated_at      	TIMESTAMP NOT NULL,
+	acc_st_is_active        BOOLEAN NOT NULL DEFAULT TRUE,
+	PRIMARY KEY(account_id)
 );
 
 -- --------------------------------------------
@@ -74,12 +77,12 @@ ALTER TABLE public.T_USR01_USERS
 ALTER TABLE public.T_USR01_USERS
 	ADD CONSTRAINT FK02_T_USR01_USERS_TO_ROLES
 		FOREIGN KEY(usr_fk_role_id)
-		REFERENCES T_R01_ROLES(role_id);
+		REFERENCES T_ROL01_ROLES(role_id);
 
 ALTER TABLE public.T_USR01_USERS
-	ADD CONSTRAINT FK03_T_USR01_USERS_TO_DETAILS
-		FOREIGN KEY(usr_fk_detail_id)
-		REFERENCES T_USR02_DETAILS(detail_id);
+	ADD CONSTRAINT FK03_T_USR01_USERS_TO_ACCOUNTS
+		FOREIGN KEY(usr_fk_account_id)
+		REFERENCES T_USR02_ACCOUNTS(account_id);
 
 --
 
@@ -90,7 +93,7 @@ ALTER TABLE public.T_USR03_ADDRESSES
 
 ALTER TABLE public.T_USR03_ADDRESSES
 	ADD CONSTRAINT FK02_T_USR03_ADDRESSES_TO_CITY
-		FOREIGN KEY(usr_fk_detail_id)
+		FOREIGN KEY(adr_fk_city_id)
 		REFERENCES T_SHR_CITIES(city_id);
 
 --
@@ -109,51 +112,75 @@ ALTER TABLE public.T_USR04_USERS_ADDRESSES_HUB
 -- INSERTS
 -- --------------------------------------------
 
-INSERT INTO PUBLIC.T_USR01_USERS 
-    (usr_tx_name, usr_tx_first_surname, usr_tx_second_surname, usr_dt_birthdate, usr_dt_created_at, usr_dt_updated_at, usr_st_is_active, usr_fk_gender_id, usr_fk_role_id, usr_fk_detail_id)
+INSERT INTO public.T_USR02_ACCOUNTS 
+    (account_id, acc_tx_nickname, acc_tx_email, acc_tx_backup_email, acc_tx_password, acc_tx_mobile_phone, acc_tx_phone_number, acc_tx_status, acc_json_images, acc_dt_created_at, acc_dt_updated_at, acc_st_is_active)
 VALUES
-    ('Yael Jaffar', 'Moya', 'Macías', '1999-12-29', NOW(), NOW(), TRUE, 1, 1, 1),
-    ('Alejandro', 'Sanchez', 'Taboada', '1990-01-15', NOW(), NOW(), TRUE, 1, 2, 2),
-    ('Antonio', 'Duran', 'Spain', '1987-04-19', NOW(), NOW(), TRUE, 1, 2, 3),
-    ('John', 'Doe', 'Smith', '1990-01-15', NOW(), NOW(), TRUE, 1, 2, 4),
-    ('Karla', 'Hernandez', 'Hernandez', '1985-07-23', NOW(), NOW(), TRUE, 2, 3, 5),
-    ('Alice', 'Garcia', 'Herrera', '1992-12-11', NOW(), NOW(), FALSE, 2, 2, 6),
-    ('Susana', 'Cuevas', 'Escobar', '1988-04-09', NOW(), NOW(), TRUE, 2, 4, 7),
-    ('Emily', 'Davis', 'Lee', '1995-09-21', NOW(), NOW(), TRUE, 2, 3, 8),
-    ('Miguel', 'Martinez', 'Garcia', '1983-11-05', NOW(), NOW(), FALSE, 1, 3, 9),
-    ('Laura', 'Rodriguez', 'Lopez', '1991-02-13', NOW(), NOW(), TRUE, 2, 2, 10),
-    ('Sarah', 'Moore', 'Thomas', '1993-08-14', NOW(), NOW(), TRUE, 2, 4, 11),
-    ('David', 'Taylor', 'Jackson', '1987-10-25', NOW(), NOW(), FALSE, 1, 3, 12);
+    (1, 'ymoyamac', 'yael.moya@email.com', 'ymoyamac@correo.com', 'Passw0rd!', '5551234567', '5557654321', 'ACTIVE', '{"images": [{"id": 1,"url": "https://image-1.jpg","description": "User image 1"}]}'::jsonb, NOW(), NOW(), TRUE),
+    (2, 'programacionats', 'ale_taboa@email.com', 'astaboa@correo.com', 'Passw0rd!', '5572212417', '558301321', 'ACTIVE', NULL, NOW(), NOW(), TRUE),
+    (3, 'sarori', 'toniduran@email.com', 'spainduran@correo.com', 'Passw0rd!', '5558182187', '5678714321', 'ACTIVE', NULL, NOW(), NOW(), TRUE),
+	(4, 'johndoe', 'john.doe@example.com', 'john.backup@example.com', 'password123', '5551234567', '5557654321', 'ACTIVE', NULL, NOW(), NOW(), TRUE),
+    (5, 'karlahdz', 'karla.hernandez@example.com', NULL, 'Passw0rd!', '5551234569', NULL, 'ACTIVE', NULL, NOW(), NOW(), FALSE),
+    (6, 'susana.cuevas', 'susana.cuevas.escobar@example.com', 'susana.backup@example.com', 'Passw0rd!', '5551234572', '5557654326', 'ACTIVE', NULL, NOW(), NOW(), FALSE);
 
-INSERT INTO public.T_USR02_DETAILS 
-    (dtl_tx_email, dtl_tx_backup_email, dtl_tx_password, dtl_tx_mobile_phone, dtl_tx_phone_number, dtl_dt_created_at, dtl_dt_updated_at, dtl_st_is_active)
+INSERT INTO PUBLIC.T_USR01_USERS 
+    (user_id, usr_tx_name, usr_tx_first_surname, usr_tx_second_surname, usr_dt_birthdate, usr_dt_created_at, usr_dt_updated_at, usr_st_is_active, usr_fk_gender_id, usr_fk_role_id, usr_fk_account_id)
 VALUES
-    ('yael.moya@email.com', 'ymoyamac@correo.com', 'Passw0rd!', '5551234567', '5557654321', NOW(), NOW(), TRUE),
-    ('ale_taboa@email.com', 'astaboa@correo.com', 'Passw0rd!', '5572212417', '558301321', NOW(), NOW(), TRUE),
-    ('toniduran@email.com', 'spainduran@correo.com', 'Passw0rd!', '5558182187', '5678714321', NOW(), NOW(), TRUE),
-	('john.doe@example.com', 'john.backup@example.com', 'password123', '5551234567', '5557654321', NOW(), NOW(), TRUE),
-    ('karla.hernandez@example.com', NULL, 'Passw0rd!', '5551234569', NULL, NOW(), NOW(), FALSE),
-    ('alice.garcia@example.com', 'alice.backup@example.com', 'Passw0rd!', '5551234570', '5557654324', NOW(), NOW(), TRUE),
-    ('susana.cuevas.escobar@example.com', 'susana.backup@example.com', 'Passw0rd!', '5551234572', '5557654326', NOW(), NOW(), FALSE),
-    ('emily.davis@example.com', NULL, 'Passw0rd!', '5551234571', NULL, NOW(), NOW(), TRUE),
-    ('miguel.martinez@example.com', 'miguel.backup@example.com', 'Passw0rd!', '5551234574', NULL, NOW(), NOW(), TRUE),
-    ('laura.rodriguez@example.com', NULL, 'Passw0rd!', '5551234573', '5557654327', NOW(), NOW(), TRUE),
-    ('sarah.moore@example.com', 'sarah.backup@example.com', 'Passw0rd!', '5551234575', '5557654328', NOW(), NOW(), TRUE),
-    ('david.taylor@example.com', NULL, 'Passw0rd!', '5551234576', NULL, NOW(), NOW(), FALSE);
+    (1, 'Yael Jaffar', 'Moya', 'Macías', '1999-12-29', NOW(), NOW(), TRUE, 1, 1, 1),
+    (2, 'Alejandro', 'Sanchez', 'Taboada', '1990-01-15', NOW(), NOW(), TRUE, 1, 2, 2),
+    (3, 'Antonio', 'Sarosi', 'Spain', '1987-04-19', NOW(), NOW(), TRUE, 1, 2, 3),
+    (4, 'John', 'Doe', 'Smith', '1990-01-15', NOW(), NOW(), TRUE, 1, 2, 4),
+    (5, 'Karla', 'Hernandez', 'Hernandez', '1985-07-23', NOW(), NOW(), TRUE, 2, 3, 5),
+    (6, 'Susana', 'Cuevas', 'Escobar', '1988-04-09', NOW(), NOW(), TRUE, 2, 4, 6);
 
 INSERT INTO public.T_USR03_ADDRESSES 
-    (adr_tx_street, adr_tx_number, adr_tx_zip_code, adr_dt_created_at, adr_dt_updated_at, adr_st_is_active, adr_fk_country_id, adr_fk_city_id)
+    (address_id, adr_tx_street, adr_tx_number, adr_tx_zip_code, adr_dt_created_at, adr_dt_updated_at, adr_st_is_active, adr_fk_country_id, adr_fk_city_id)
 VALUES
-    ('Camino a casas viejas', '28', '54602', NOW(), NOW(), TRUE, 1, 1),
-    ('Av. Central de puente nuevo', '23B', '23456', NOW(), NOW(), TRUE, 9, 8),
-    ('Madrid, Paseo de la Castellana', '8', '34567', NOW(), NOW(), FALSE, 3, 9),
-    ('1 Maple Road', '15C', '45678', NOW(), NOW(), TRUE, 2, 1),
-    ('5 de mayo', '12D', '56789', NOW(), NOW(), TRUE, 1, 1),
-    ('Insurgentes sur', '3', '67890', NOW(), NOW(), TRUE, 1, 1),
-    ('Miguel Hidalgo, Avenida Río San Joaquín', '3', '67890', NOW(), NOW(), TRUE, 1, 1),
-    ('404 Walnut St', '2B', '78901', NOW(), NOW(), FALSE, 2, 1),
-    ('505 Ash Dr', '9A', '89012', NOW(), NOW(), TRUE, 3, 1),
-    ('606 Beech Way', '7', '90123', NOW(), NOW(), TRUE, 1, 109),
-    ('707 Fir Path', '5D', '01234', NOW(), NOW(), TRUE, 1, 110);
+    (1, 'Camino a casas viejas', '28', '54602', NOW(), NOW(), TRUE, 1, 1),
+    (2, 'Av. Central de puente nuevo', '23B', '23456', NOW(), NOW(), TRUE, 9, 8),
+    (3, 'Madrid, Paseo de la Castellana', '8', '34567', NOW(), NOW(), FALSE, 3, 9),
+    (4, '1 Maple Road', '15C', '45678', NOW(), NOW(), TRUE, 2, 1),
+    (5, '5 de mayo', '12D', '56789', NOW(), NOW(), TRUE, 1, 1),
+    (6, 'Insurgentes sur', '3', '67890', NOW(), NOW(), TRUE, 1, 1);
 
+INSERT INTO PUBLIC.T_USR04_USERS_ADDRESSES_HUB
+	(id, user_id, address_id)
+VALUES
+	(1, 1, 1),
+	(2, 2, 2),
+	(3, 3, 3),
+	(4, 4, 4),
+	(5, 5, 5),
+	(6, 6, 6);
 
+-- --------------------------------------------
+-- SELECTS
+-- --------------------------------------------
+
+SELECT T_USR01_USERS.user_id,
+	T_USR01_USERS.usr_tx_name,
+	T_USR01_USERS.usr_tx_first_surname,
+	T_USR01_USERS.usr_tx_second_surname,
+	T_USR01_USERS.usr_dt_birthdate,
+	T_USR01_USERS.usr_st_is_active,
+	T_USR02_ACCOUNTS.account_id,
+	T_USR02_ACCOUNTS.acc_tx_nickname,
+	T_USR02_ACCOUNTS.acc_tx_email,
+	T_USR02_ACCOUNTS.acc_tx_backup_email,
+	T_USR02_ACCOUNTS.acc_tx_password,
+	T_USR02_ACCOUNTS.acc_tx_mobile_phone,
+	T_USR02_ACCOUNTS.acc_tx_phone_number,
+	T_USR02_ACCOUNTS.acc_tx_status,
+	T_USR02_ACCOUNTS.acc_json_images,
+	T_USR03_ADDRESSES.address_id,
+	T_USR03_ADDRESSES.adr_tx_street,
+	T_USR03_ADDRESSES.adr_tx_number,
+	T_USR03_ADDRESSES.adr_tx_zip_code,
+	T_USR03_ADDRESSES.adr_fk_country_id,
+	T_USR03_ADDRESSES.adr_fk_city_id,
+	T_ROL01_ROLES.role_id,
+	T_ROL01_ROLES.role_tx_type,
+FROM T_USR01_USERS
+INNER JOIN T_USR02_ACCOUNTS ON T_USR01_USERS.usr_fk_account_id = T_USR02_ACCOUNTS.account_id
+INNER JOIN T_USR04_USERS_ADDRESSES_HUB ON T_USR01_USERS.user_id = T_USR04_USERS_ADDRESSES_HUB.user_id
+INNER JOIN T_USR03_ADDRESSES ON T_USR04_USERS_ADDRESSES_HUB.address_id = T_USR03_ADDRESSES.address_id
+INNER JOIN T_ROL01_ROLES ON T_USR01_USERS.usr_fk_role_id = T_ROL01_ROLES.role_id;
