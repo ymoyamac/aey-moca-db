@@ -1,12 +1,12 @@
 services:
   postgres:
-    container_name: papersandnotes_image
+    container_name: mocadbdev_image
     image: postgres:latest
-    restart: unless-stopped
+    restart: always
     environment:
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=postgres
-      - POSTGRES_DB=pandb
+      - POSTGRES_USER=ymoyamac
+      - POSTGRES_PASSWORD=ymoyamac
+      - POSTGRES_DB=mocadbdev
     ports:
       - '5432:5432'
     volumes:
