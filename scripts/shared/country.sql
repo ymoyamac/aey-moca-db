@@ -14,7 +14,9 @@ CREATE TABLE IF NOT EXISTS public.T_SHR_COUNTRIES(
 	PRIMARY KEY(country_id)
 );
 
---
+-- --------------------------------------------
+-- INSERTS
+-- --------------------------------------------
 
 INSERT INTO T_SHR_COUNTRIES VALUES (1, 'México', 'MX', 484, now(), now(), true);
 -- INSERT INTO T_SHR_COUNTRIES VALUES (2, 'Canada', 'CAN', 124, now(), now(), true);
@@ -26,7 +28,9 @@ INSERT INTO T_SHR_COUNTRIES VALUES (1, 'México', 'MX', 484, now(), now(), true)
 -- INSERT INTO T_SHR_COUNTRIES VALUES (8, 'Argentina', 'ARG', 32, now(), now(), true);
 -- INSERT INTO T_SHR_COUNTRIES VALUES (9, 'Perú', 'PR', 604, now(), now(), true);
 
---
+-- --------------------------------------------
+-- SELECTS
+-- --------------------------------------------
 
 SELECT country_id AS id,
     ctry_tx_name AS name,

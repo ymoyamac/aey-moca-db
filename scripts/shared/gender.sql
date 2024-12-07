@@ -1,4 +1,3 @@
---T_SHR_GENDERS
 -- --------------------------------------------
 -- T_SHR_GENDERS
 -- --------------------------------------------
@@ -13,13 +12,17 @@ CREATE TABLE IF NOT EXISTS public.T_SHR_GENDERS(
 	PRIMARY KEY(gender_id)
 );
 
---
+-- --------------------------------------------
+-- INSERTS
+-- --------------------------------------------
 
 INSERT INTO T_SHR_GENDERS VALUES (1, 'MALE', 'M', NOW(), NOW(), true);
 INSERT INTO T_SHR_GENDERS VALUES (2, 'FEMALE', 'F', NOW(), NOW(), true);
-INSERT INTO T_SHR_GENDERS VALUES (2, 'OTHER', 'O', NOW(), NOW(), true);
+INSERT INTO T_SHR_GENDERS VALUES (3, 'OTHER', 'O', NOW(), NOW(), true);
 
---
+-- --------------------------------------------
+-- SELECTS
+-- --------------------------------------------
 
 SELECT gender_id AS id,
     gen_tx_name AS gender,
