@@ -5,9 +5,8 @@
 
 CREATE TABLE IF NOT EXISTS public.T_SHR_COUNTRIES(
 	country_id              INTEGER UNIQUE NOT NULL,
-	ctry_tx_name            VARCHAR(50) NOT NULL,
-	ctry_tx_abbrevation     VARCHAR(10) NOT NULL,
-    ctry_nu_code            SMALLINT UNIQUE NOT NULL,
+	ctry_tx_name            VARCHAR(50) UNIQUE NOT NULL,
+	ctry_tx_abbrevation     VARCHAR(10) UNIQUE NOT NULL,
     ctry_dt_created_at      TIMESTAMP NOT NULL,
     ctry_dt_updated_at      TIMESTAMP NOT NULL,
 	ctry_st_is_active       BOOLEAN NOT NULL DEFAULT TRUE,
@@ -18,7 +17,7 @@ CREATE TABLE IF NOT EXISTS public.T_SHR_COUNTRIES(
 -- INSERTS
 -- --------------------------------------------
 
-INSERT INTO T_SHR_COUNTRIES VALUES (1, 'México', 'MX', 484, now(), now(), true);
+INSERT INTO T_SHR_COUNTRIES VALUES (484, 'México', 'MX', NOW(), NOW(), true);
 -- INSERT INTO T_SHR_COUNTRIES VALUES (2, 'Canada', 'CAN', 124, now(), now(), true);
 -- INSERT INTO T_SHR_COUNTRIES VALUES (3, 'España', 'ESP', 724, now(), now(), true);
 -- INSERT INTO T_SHR_COUNTRIES VALUES (4, 'Chile', 'CHL', 152, now(), now(), true);
@@ -32,8 +31,7 @@ INSERT INTO T_SHR_COUNTRIES VALUES (1, 'México', 'MX', 484, now(), now(), true)
 -- SELECTS
 -- --------------------------------------------
 
-SELECT country_id AS id,
-    ctry_tx_name AS name,
+SELECT country_id AS country_name,
     ctry_tx_abbrevation AS abbrevation,
     ctry_nu_code AS code,
     ctry_dt_created_at AS created_at,

@@ -3,9 +3,8 @@
 -- --------------------------------------------
 
 CREATE TABLE IF NOT EXISTS public.T_SHR_GENDERS(
-	gender_id           	INTEGER UNIQUE NOT NULL,
-	gen_tx_name         	VARCHAR(20) UNIQUE NOT NULL,
-	gen_tx_abbrevation  	VARCHAR(2) UNIQUE NOT NULL,
+	gender_id             	VARCHAR(20) UNIQUE NOT NULL,
+	gen_tx_key             	VARCHAR(1) UNIQUE NOT NULL,
     gen_dt_created_at       TIMESTAMP NOT NULL,
     gen_dt_updated_at       TIMESTAMP NOT NULL,
 	gen_st_is_active    	BOOLEAN NOT NULL DEFAULT TRUE,
@@ -16,16 +15,14 @@ CREATE TABLE IF NOT EXISTS public.T_SHR_GENDERS(
 -- INSERTS
 -- --------------------------------------------
 
-INSERT INTO T_SHR_GENDERS VALUES (1, 'MALE', 'M', NOW(), NOW(), true);
-INSERT INTO T_SHR_GENDERS VALUES (2, 'FEMALE', 'F', NOW(), NOW(), true);
-INSERT INTO T_SHR_GENDERS VALUES (3, 'OTHER', 'O', NOW(), NOW(), true);
+INSERT INTO T_SHR_GENDERS VALUES ('MALE', 'M', NOW(), NOW(), true);
+INSERT INTO T_SHR_GENDERS VALUES ('FEMALE', 'F', NOW(), NOW(), true);
 
 -- --------------------------------------------
 -- SELECTS
 -- --------------------------------------------
 
-SELECT gender_id AS id,
-    gen_tx_name AS gender,
+SELECT gender_id AS gender,
     gen_tx_abbrevation AS code,
     gen_dt_created_at AS created_at,
     gen_dt_updated_at AS updated_at,
