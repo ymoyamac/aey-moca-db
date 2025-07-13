@@ -24,7 +24,13 @@ postgres=# CREATE USER ymoyamac WITH PASSWORD 'ymoyamac';
 ```
 ### Create database
 ```sql
-postgres=# CREATE DATABASE mocadbdev;
+postgres=# CREATE DATABASE mocadev;
+```
+
+### Create schema
+
+```sql
+create schema if not exists moca authorization ymoyamac;
 ```
 
 ### Grant privileges
@@ -35,17 +41,34 @@ docker exec -it mocadb-dev psql -U postgres
 ```
 * Second connect to target DB
 ```sql
-postgres=#\c mocadbdev
+postgres=#\c mocadev
 ```
 * Finally grant privileges
 ```sql
-mocadbdev=# GRANT USAGE ON SCHEMA public TO ymoyamac;
+mocadev=# GRANT USAGE ON SCHEMA public TO ymoyamac;
 ```
 ```sql
-mocadbdev=# GRANT ALL ON SCHEMA public TO ymoyamac;
+mocadev=# GRANT ALL ON SCHEMA public TO ymoyamac;
 ```
 ```sql
-mocadbdev=# GRANT ALL PRIVILEGES ON DATABASE mocadbdev TO ymoyamac;
+mocadev=# GRANT ALL PRIVILEGES ON DATABASE mocadev TO ymoyamac;
+```
+
+### Create schema
+
+```sql
+create schema if not exists moca authorization ymoyamac;
+```
+
+* Finally grant privileges
+```sql
+mocadev=# GRANT USAGE ON SCHEMA moca TO ymoyamac;
+```
+```sql
+mocadev=# GRANT ALL ON SCHEMA moca TO ymoyamac;
+```
+```sql
+mocadev=# GRANT ALL PRIVILEGES ON DATABASE mocadev TO ymoyamac;
 ```
 
 # Psql commands
@@ -64,7 +87,7 @@ postgres=# \l
 ```
 ### Connectino
 ```sql
-postgres=# \c mocadbdev ymoyamac 127.0.0.1 5432
+postgres=# \c mocadev ymoyamac 127.0.0.1 5432
 ```
 
 * Psql commands

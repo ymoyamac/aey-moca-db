@@ -2,7 +2,7 @@
 -- T_MODULES
 -- --------------------------------------------
 
-CREATE TABLE IF NOT EXISTS public.T_MODULES(
+CREATE TABLE IF NOT EXISTS MOCA.T_MODULES(
 	module_key      VARCHAR(45) UNIQUE NOT NULL,
 	PRIMARY KEY(module_key)
 );
